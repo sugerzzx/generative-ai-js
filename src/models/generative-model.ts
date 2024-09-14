@@ -26,6 +26,7 @@ import {
   Content,
   CountTokensRequest,
   CountTokensResponse,
+  CustomRequestOptions,
   EmbedContentRequest,
   EmbedContentResponse,
   GenerateContentRequest,
@@ -96,10 +97,10 @@ export class GenerativeModel {
    */
   async generateContent(
     request: GenerateContentRequest | string | Array<string | Part>,
-    requestOptions: SingleRequestOptions = {},
+    requestOptions: CustomRequestOptions = {},
   ): Promise<GenerateContentResult> {
     const formattedParams = formatGenerateContentInput(request);
-    const generativeModelRequestOptions: SingleRequestOptions = {
+    const generativeModelRequestOptions: CustomRequestOptions = {
       ...this._requestOptions,
       ...requestOptions,
     };
@@ -131,10 +132,10 @@ export class GenerativeModel {
    */
   async generateContentStream(
     request: GenerateContentRequest | string | Array<string | Part>,
-    requestOptions: SingleRequestOptions = {},
+    requestOptions: CustomRequestOptions = {},
   ): Promise<GenerateContentStreamResult> {
     const formattedParams = formatGenerateContentInput(request);
-    const generativeModelRequestOptions: SingleRequestOptions = {
+    const generativeModelRequestOptions: CustomRequestOptions = {
       ...this._requestOptions,
       ...requestOptions,
     };

@@ -16,11 +16,11 @@
  */
 
 import {
+  CustomRequestOptions,
   GenerateContentRequest,
   GenerateContentResponse,
   GenerateContentResult,
   GenerateContentStreamResult,
-  SingleRequestOptions,
 } from "../../types";
 import { Task, makeModelRequest } from "../requests/request";
 import { addHelpers } from "../requests/response-helpers";
@@ -30,7 +30,7 @@ export async function generateContentStream(
   apiKey: string,
   model: string,
   params: GenerateContentRequest,
-  requestOptions: SingleRequestOptions,
+  requestOptions: CustomRequestOptions,
 ): Promise<GenerateContentStreamResult> {
   const response = await makeModelRequest(
     model,
@@ -47,7 +47,7 @@ export async function generateContent(
   apiKey: string,
   model: string,
   params: GenerateContentRequest,
-  requestOptions?: SingleRequestOptions,
+  requestOptions?: CustomRequestOptions,
 ): Promise<GenerateContentResult> {
   const response = await makeModelRequest(
     model,

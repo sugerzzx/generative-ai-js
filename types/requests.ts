@@ -205,6 +205,13 @@ export interface SingleRequestOptions extends RequestOptions {
   signal?: AbortSignal;
 }
 
+export interface CustomRequestOptions extends SingleRequestOptions {
+  /**
+   * Custom Distacher for the request.
+   */
+  dispatcher?: RequestInit["dispatcher"];
+}
+
 /**
  * Defines a tool that model can call to access external knowledge.
  * @public

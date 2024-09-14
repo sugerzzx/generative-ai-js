@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { RequestOptions, SingleRequestOptions } from "../../types";
+import { CustomRequestOptions, RequestOptions } from "../../types";
 import {
   GoogleGenerativeAIError,
   GoogleGenerativeAIFetchError,
@@ -48,7 +48,7 @@ export class RequestUrl {
     public apiKey: string,
     public stream: boolean,
     public requestOptions: RequestOptions,
-  ) {}
+  ) { }
   toString(): string {
     const apiVersion = this.requestOptions?.apiVersion || DEFAULT_API_VERSION;
     const baseUrl = this.requestOptions?.baseUrl || DEFAULT_BASE_URL;
@@ -116,8 +116,8 @@ export async function constructModelRequest(
   apiKey: string,
   stream: boolean,
   body: string,
-  requestOptions: SingleRequestOptions,
-): Promise<{ url: string; fetchOptions: RequestInit }> {
+  requestOptions: CustomRequestOptions,
+): Promise<{ url: string; fetchOptions: RequestInit; }> {
   const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
   return {
     url: url.toString(),
@@ -136,7 +136,7 @@ export async function makeModelRequest(
   apiKey: string,
   stream: boolean,
   body: string,
-  requestOptions: SingleRequestOptions = {},
+  requestOptions: CustomRequestOptions = {},
   // Allows this to be stubbed for tests
   fetchFn = fetch,
 ): Promise<Response> {
@@ -203,8 +203,7 @@ async function handleResponseNotOk(
     // ignored
   }
   throw new GoogleGenerativeAIFetchError(
-    `Error fetching from ${url.toString()}: [${response.status} ${
-      response.statusText
+    `Error fetching from ${url.toString()}: [${response.status} ${response.statusText
     }] ${message}`,
     response.status,
     response.statusText,
@@ -217,19 +216,20 @@ async function handleResponseNotOk(
  * @param requestOptions - The user-defined request options.
  * @returns The generated request options.
  */
-function buildFetchOptions(requestOptions?: SingleRequestOptions): RequestInit {
+function buildFetchOptions(requestOptions?: CustomRequestOptions): RequestInit {
   const fetchOptions = {} as RequestInit;
-  if (requestOptions?.signal !== undefined || requestOptions?.timeout >= 0) {
+  const { signal, ...otherOptions } = requestOptions;
+  if (signal !== undefined || requestOptions?.timeout >= 0) {
     const controller = new AbortController();
     if (requestOptions?.timeout >= 0) {
       setTimeout(() => controller.abort(), requestOptions.timeout);
     }
-    if (requestOptions?.signal) {
+    if (signal) {
       requestOptions.signal.addEventListener("abort", () => {
         controller.abort();
       });
     }
     fetchOptions.signal = controller.signal;
   }
-  return fetchOptions;
+  return { ...fetchOptions, ...otherOptions };
 }
